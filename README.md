@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cutting Plan Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    label, input { display: block; margin: 8px 0; }
+    button { margin-top: 12px; }
+    .result { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Cutting Plan Calculator</h1>
+  <label>Raw material length (mm):
+    <input id="rawLength" type="number" value="6000" min="1" />
+  </label>
+  <label>Detail 1 size (mm):
+    <input id="detail1" type="number" value="1675" min="1" />
+  </label>
+  <label>Quantity Detail 1:
+    <input id="qtyDetail1" type="number" value="10" min="0" />
+  </label>
+  <label>Detail 2 size (mm):
+    <input id="detail2" type="number" value="1100" min="1" />
+  </label>
+  <label>Quantity Detail 2:
+    <input id="qtyDetail2" type="number" value="15" min="0" />
+  </label>
+  <label>Detail 3 size (mm):
+    <input id="detail3" type="number" value="700" min="1" />
+  </label>
+  <label>Quantity Detail 3:
+    <input id="qtyDetail3" type="number" value="20" min="0" />
+  </label>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function calculate() {
+      const rawLength = +document.getElementById('rawLength').value;
+      const detail1 = +document.getElementById('detail1').value;
+      const qtyDetail1 = +document.getElementById('qtyDetail1').value;
+      const detail2 = +document.getElementById('detail2').value;
+      const qtyDetail2 = +document.getElementById('qtyDetail2').value;
+      const detail3 = +document.getElementById('detail3').value;
+      const qtyDetail3 = +document.getElementById('qtyDetail3').value;
+
+      let made1 = 0, made2 = 0, made3 = 0;
+      let rawPieces = 0;
+      let cutsPlan = [];
+
+      while (made1 < qtyDetail1 || made2 < qtyDetail2 || made3 < qtyDetail3) {
+        rawPieces++;
+        let leftover = rawLength;
+        let cuts1 = 0, cuts2 = 0, cuts3 = 0;
+
+        while (made1 < qtyDetail1 && leftover >= detail1) {
+          leftover -= detail1;
+          made1++;
+          cuts1++;
+        }
+        while (made2 < qtyDetail2 && leftover >= detail2) {
+          leftover -= detail2;
+          made2++;
+          cuts2++;
+        }
+        while (made3 < qtyDetail3 && leftover >= detail3) {
+          leftover -= detail3;
+          made3++;
+          cuts3++;
+        }
+
+        cutsPlan.push({cuts1, cuts2, cuts3, leftover});
+      }
+
+      let output = `<h2>Raw material pieces needed: ${rawPieces}</h2>`;
+      output += `<h3>Cutting plan per raw piece:</h3><ul>`;
+      cutsPlan.forEach((p, i) => {
+        output += `<li>Raw piece ${i+1}: Detail1: ${p.cuts1} pcs, Detail2: ${p.cuts2} pcs, Detail3: ${p.cuts3} pcs, Leftover: ${p.leftover} mm</li>`;
+      });
+      output += `</ul>`;
+      output += `<h3>Total details made:</h3>
+                 <ul>
+                  <li>Detail1: ${made1}</li>
+                  <li>Detail2: ${made2}</li>
+                  <li>Detail3: ${made3}</li>
+                 </ul>`;
+
+      document.getElementById('result').innerHTML = output;
+    }
+  </script>
+</body>
+</html>
